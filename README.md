@@ -1,6 +1,11 @@
 # TODO API made in Python and Flask
 A simple API for a todo application, usable via cURL or programmatically.
 
+### TODO'S
+- [ ] Implement a simple sqlite3 database to store persistent data.
+- [ ] Polish and Refactor code for readability and documentation.
+- [ ] Create a frontend cli application that uses the API.
+
 ### Features:
 - Handles GET and POST requests
 - Supports deleting tasks using a DELETE request.
@@ -44,12 +49,6 @@ Run the API server:
 python app.py
 ```
 This will run the server at http://127.0.0.1:5000
-
-### TODO'S
-- [ ] Implement a simple sqlite3 database to store persistent data.
-- [ ] Polish and Refactor code for readability and documentation.
-- [ ] Create a frontend cli application that uses the API.
-
 
 ### LICENSE
 [LICENSE](./LICENSE)
