@@ -22,7 +22,7 @@ def close_connection(exception):
 def get_tasks():
     db = get_db()
     tasks = db.execute("SELECT * FROM tasks").fetchall()
-    return jsonify([dict(task) for task in tasks])
+    return jsonify(dict([task for task in tasks]))
 
 @app.route('/tasks', methods=["POST"])
 def add_tasks():
@@ -31,7 +31,7 @@ def add_tasks():
     now = datetime.now().isoformat()
 
     db.execute('''
-               INSERT INTO tasks (title, description, completed, created_at)
+               INSERT INTO tasks (title, description, completed, createdAt)
                VALUES (?, ?, ?, ?)
             ''', (data['title'], data.get('description'), data['completed'], now))
 
