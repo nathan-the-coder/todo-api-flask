@@ -1,63 +1,54 @@
-import datetime
+from datetime import datetime
+import sqlite3
 from flask import Flask, request, jsonify
+from flask import g
 
 app = Flask(__name__)
-tasks = []
+DATABASE = "tasks.db"
 
-class Task:
-    id: int
-    title: str
-    description: str | None
-    completed: bool
-    createdAt: datetime.date
-    updatedAt: datetime.date | None
-
-    def __init__(self, title: str | None, description: str | None, completed: bool):
-
-        self.id = len(tasks) + 1
-        self.title = str(title)
-        self.description = description
-        self.completed = completed
-
-        self.createdAt = datetime.datetime.now().date()
-        self.updatedAt = None
-
-
-    def to_dict(self):
-        return {
-                "id": self.id,
-                "title": self.title, 
-                "description": self.description, 
-                "completed": self.completed,
-                }
+def get_db():
+    if 'db' not in g:
+        g.db = sqlite3.connect(DATABASE)
     
+    return g.db
 
-@app.route('/tasks', methods=["GET", "POST"])
-def handle_tasks():
-    if request.method == "GET":
-        return jsonify(tasks)
+@app.teardown_appcontext
+def close_connection(exception):
+    db = getattr(g, ' database', None)
+    if db is not None:
+        db.close()
 
-    elif request.method == "POST":
-        data: dict = request.get_json()
+@app.route('/tasks', methods=["GET"])
+def get_tasks():
+    db = get_db()
+    tasks = db.execute("SELECT * FROM tasks").fetchall()
+    return jsonify([dict(task) for task in tasks])
 
-        newTask = Task(data.get("task_title"), data.get("task_description"), False)
+@app.route('/tasks', methods=["POST"])
+def add_tasks():
+    data: dict = request.get_json()
+    db = get_db()
+    now = datetime.now().isoformat()
 
-        if not newTask:
-            return {"error": "Failed to get task data from the form" }, 404
-        tasks.append(newTask.to_dict())
+    db.execute('''
+               INSERT INTO tasks (title, description, completed, created_at)
+               VALUES (?, ?, ?, ?)
+            ''', (data['title'], data.get('description'), data['completed'], now))
 
-        return jsonify(newTask.to_dict()), 201
+    db.commit()
+    return jsonify({"message": "Task added successfully!"}), 201
 
-    return {}
 
 @app.route('/tasks/<int:task_id>', methods=["DELETE"])
 def delete_task(task_id: int):
-    global tasks
+    db = get_db()
+    tasks = db.execute("SELECT * FROM tasks").fetchall()
 
     for i, task in enumerate(tasks):
         if task["id"] == task_id:
             deleted_task = tasks.pop(i)
-            return jsonify(deleted_task), 200
+            return jsonify({"message": f"Task {i} deleted successfully"}), 200
+
     return {"error": "Task not found"}, 404
 
 
