@@ -2,7 +2,7 @@
 A simple API for a todo application, usable via cURL or programmatically.
 
 ### TODO'S
-- [ ] Implement a simple sqlite3 database to store persistent data.
+- [x] Implement a simple sqlite3 database to store persistent data.
 - [ ] Polish and Refactor code for readability and documentation.
 - [ ] Create a frontend cli application that uses the API.
 
