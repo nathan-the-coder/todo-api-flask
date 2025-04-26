@@ -9,6 +9,7 @@ A simple API for a todo application, usable via cURL or programmatically.
 ### Features:
 - Handles GET and POST requests
 - Supports deleting tasks using a DELETE request.
+- Added support for updating specific task using the PUT request.
 - Uses in-memory storage (a Python list) to hold tasks during runtime.
 
 ### Endpoints
@@ -18,7 +19,7 @@ A simple API for a todo application, usable via cURL or programmatically.
 | GET    | `/tasks`           | Fetch all tasks            |
 | POST   | `/tasks`           | Add a new task             |
 | DELETE | `/tasks/<task_id>` | Delete a task by its ID    |
-
+| PUT    | `/tasks/<task_id>` | Update a task by its ID    |
 
 ### Usage:
 You can interact with this API using your app or with **cURL** from the command line.
@@ -36,6 +37,11 @@ curl -i -H "Content-Type: application/json" -X POST -d '{"task_title": "New Task
 #### Delete a task by ID
 ```sh
 curl -X DELETE http://127.0.0.1:5000/tasks/1
+```
+
+### Update a task by ID
+```sh
+curl -X PUT http://127.0.0.1:5000/tasks/1 -H "Content-Type: application/json" -d '{"title": "Test title", "description": "test description", "completed": false}'
 ```
 
 #### Running the server
